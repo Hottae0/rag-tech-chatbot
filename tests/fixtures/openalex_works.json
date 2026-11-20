@@ -1,0 +1,33 @@
+{
+  "results": [
+    {
+      "id": "https://openalex.org/W101",
+      "title": "Fast charging and degradation in lithium-ion batteries",
+      "publication_year": 2023,
+      "doi": "https://doi.org/10.1234/test.battery",
+      "cited_by_count": 5,
+      "abstract_inverted_index": {"lithium": [0], "plating": [1], "and": [2], "degradation": [3]},
+      "authorships": [
+        {"author": {"id": "https://openalex.org/A101", "display_name": "Test Researcher A"}, "institutions": [{"id": "https://openalex.org/I101", "display_name": "Test Institute A"}]},
+        {"author": {"id": "https://openalex.org/A102", "display_name": "Test Researcher B"}, "institutions": [{"id": "https://openalex.org/I101", "display_name": "Test Institute A"}]}
+      ],
+      "primary_topic": {"id": "https://openalex.org/T101", "display_name": "Battery research"},
+      "referenced_works": ["https://openalex.org/W102", "https://openalex.org/W999", "W999", "invalid"],
+      "primary_location": {"landing_page_url": "https://example.org/papers/101"}
+    },
+    {
+      "id": "https://openalex.org/W102",
+      "title": "Semiconductor fabrication and thermal control",
+      "publication_year": 2021,
+      "doi": "javascript:alert(1)",
+      "authorships": [
+        {"author": {"id": "https://openalex.org/A101", "display_name": "Test Researcher A"}, "institutions": [{"id": "https://openalex.org/I102", "display_name": "Test Institute B"}]},
+        {"author": {"id": "https://openalex.org/A103", "display_name": "Test Researcher C"}, "institutions": null},
+        {"author": null, "institutions": []}
+      ],
+      "primary_location": {"landing_page_url": "https://user:password@example.org/paper"}
+    },
+    {"id": "W101", "title": "Duplicate"},
+    {"id": "invalid", "title": "Invalid"}
+  ]
+}
