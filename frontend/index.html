@@ -1,71 +1,129 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="기술 문제와 관련된 논문 및 연구기관을 OpenAlex 메타데이터에서 찾습니다.">
-  <title>TechBridge AI | 기술 탐색</title>
-  <link rel="stylesheet" href="./style.css">
-  <script type="module" src="./app.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1">
+  <title>RAG 기술 탐색 서비스</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f6fb;
+      margin: 0;
+      padding: 65px 16px;
+      color: #1e293b;
+    }
+    main {
+      max-width: 720px;
+      margin: auto;
+      background: white;
+      padding: 32px;
+      border-radius: 16px;
+      box-shadow: 0 5px 24px #00000010;
+    }
+    h1 { margin-bottom: 10px; }
+    p { color: #64748b; line-height: 1.6; }
+    textarea {
+      display: block;
+      width: 100%;
+      height: 120px;
+      padding: 14px;
+      margin-top: 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font: inherit;
+      resize: vertical;
+    }
+    button {
+      margin-top: 16px;
+      background: #2563eb;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:disabled { opacity: 0.6; }
+    #result {
+      margin-top: 24px;
+      padding: 16px;
+      background: #f8fafc;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      line-height: 1.7;
+      min-height: 60px;
+    }
+    small { color: #64748b; }
+  </style>
 </head>
 <body>
-  <header class="site-header">
-    <div class="shell header-inner">
-      <a class="brand" href="./"><span class="brand-mark" aria-hidden="true">TB</span> TechBridge AI</a>
-      <span id="catalog-status" class="catalog-status">카탈로그 불러오는 중…</span>
+  <main>
+    <h1>RAG 기술 탐색 서비스</h1>
+    <p>
+      논문 및 특허를 활용하여 기업의 기술적 문제
+      해결을 지원하는 챗봇 서비스입니다.
+    </p>
+    <small>현재 버전: AWS 환경 연결 테스트</small>
+
+    <h3>기술 관련 질문</h3>
+
+    <textarea
+      id="question"
+      maxlength="500"
+      placeholder="예: 배터리 수명을 개선하는 기술은?">
+    </textarea>
+
+    <button id="sendButton" onclick="sendQuestion()">
+      질문하기
+    </button>
+
+    <div id="result" role="status">
+      질문을 입력하면 결과가 여기에 표시됩니다.
     </div>
-  </header>
-  <main class="shell">
-    <section class="hero" aria-labelledby="hero-title">
-      <div class="hero-copy">
-        <p class="eyebrow">Metadata-based Graph Retrieval MVP</p>
-        <h1 id="hero-title">기술 문제에서<br>연구 파트너 후보까지</h1>
-        <p>해결하고 싶은 기술 문제를 입력하면 관련 논문과 저자가 발표 당시 소속된 연구기관을 찾아줍니다.</p>
-      </div>
-      <form id="search-form" class="search-panel">
-        <label for="question">해결하려는 기술 문제</label>
-        <textarea id="question" rows="3" maxlength="500" required placeholder="예: 배터리 충전 속도를 유지하면서 수명을 늘리는 기술이 필요합니다."></textarea>
-        <div class="form-actions">
-          <button type="button" id="example" class="secondary">예시 질문 입력</button>
-          <button type="submit" id="submit" disabled>관련 연구 찾기</button>
-        </div>
-      </form>
-    </section>
-    <p id="search-status" role="status" class="status"></p>
-    <button id="retry" class="secondary" type="button" hidden>다시 불러오기</button>
-    <section id="results" aria-label="검색 결과" hidden>
-      <div class="section-top">
-        <h2>기술 키워드</h2>
-        <ul id="keywords" class="keywords"></ul>
-      </div>
-      <div class="result-grid">
-        <section aria-labelledby="paper-title">
-          <div class="section-top"><h2 id="paper-title">관련 논문</h2><span id="paper-count"></span></div>
-          <div class="cards" id="papers"></div>
-        </section>
-        <section aria-labelledby="org-title">
-          <div class="section-top"><h2 id="org-title">추천 연구기관</h2><span id="org-count"></span></div>
-          <div class="cards" id="institutions"></div>
-        </section>
-      </div>
-      <section class="graph-panel" id="graph-panel" aria-labelledby="graph-title" hidden>
-        <div class="section-top"><h2 id="graph-title">연구 연결 그래프</h2></div>
-        <label for="graph-institution">그래프로 볼 연구기관</label>
-        <select id="graph-institution"></select>
-        <p class="muted">선택한 기관의 근거 경로를 최대 6개 표시합니다. 노드를 선택하면 세부 정보가 열립니다.</p>
-        <div class="graph-scroll" id="graph"></div>
-        <div id="graph-detail" aria-live="polite"></div>
-      </section>
-      <aside class="review">
-        <h2>기술 적용 전 검토 사항</h2>
-        <ul>
-          <li>배터리 화학계, 충전 조건, 온도 범위와 수명 지표를 실제 제품 요구사항과 비교하세요.</li>
-          <li>파일럿 재현성, 안전 시험, 특허 및 실시 자유를 별도로 검토하세요.</li>
-          <li>추천 점수는 논문의 주제 적합도를 나타냅니다. 현재 소속, 협력 의향과 기술이전 조건은 기관에 직접 확인하세요.</li>
-        </ul>
-      </aside>
-    </section>
   </main>
-  <footer class="shell">논문 및 소속 정보 출처 <a href="https://openalex.org/">OpenAlex</a></footer>
+
+  <script>
+    // API Gateway에서 복사한 실제 Invoke URL
+    const API_URL = "https://https://0aqs74oo4m.execute-api.ap-northeast-2.amazonaws.com";
+
+    async function sendQuestion() {
+      const question =
+        document.getElementById("question").value.trim();
+      const result = document.getElementById("result");
+      const button = document.getElementById("sendButton");
+
+      if (!question) {
+        result.textContent = "질문을 입력해주세요.";
+        return;
+      }
+
+      button.disabled = true;
+      result.textContent = "서버에 요청하는 중입니다...";
+
+      try {
+        const response = await fetch(`${API_URL}/search`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ question })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "API 요청 실패");
+        }
+
+        result.textContent = data.answer;
+      } catch (error) {
+        result.textContent = "오류: " + error.message;
+      } finally {
+        button.disabled = false;
+      }
+    }
+  </script>
 </body>
 </html>
